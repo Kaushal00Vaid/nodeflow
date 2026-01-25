@@ -35,6 +35,13 @@ const loginSchema = z.object({
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
+/**
+ * Renders a login form with email/password fields, OAuth buttons, and submission handling.
+ *
+ * Submits credentials to the authentication client; on success navigates to "/", on error shows a toast message.
+ *
+ * @returns The React element for the login form.
+ */
 export function LoginForm() {
   const router = useRouter();
 
