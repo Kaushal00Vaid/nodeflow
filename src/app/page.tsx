@@ -18,6 +18,10 @@ const Page = () => {
       onSuccess: () => {
         toast.success("Getting your AIJob Done!");
       },
+
+      onError: (error) => {
+        toast.error("Some error occurred: " + error.message);
+      },
     }),
   );
 
