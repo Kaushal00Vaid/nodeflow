@@ -8,8 +8,9 @@
     "start": "next start",
     "lint": "biome check",
     "format": "biome format --write",
+    "ngrok:dev": "ngrok http --url=dolorimetric-dreamily-pete.ngrok-free.dev 3000",
     "inngest:dev": "inngest-cli dev",
-    "dev:all": "mprocs"
+    "dev:all": "dotenv -- mprocs"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^2.0.17",
@@ -97,6 +98,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/toposort": "^2.0.7",
+    "dotenv-cli": "^11.0.0",
     "inngest-cli": "^1.16.1",
     "mprocs": "^0.8.3",
     "tailwindcss": "^4",
