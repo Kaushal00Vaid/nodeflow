@@ -1,9 +1,9 @@
 import type { NodeExecutor } from "@/features/executions/types";
 import { NonRetriableError } from "inngest";
 import { generateText } from "ai";
-import { createOpenAI } from "@ai-sdk/openai";
+import { createAnthropic } from "@ai-sdk/anthropic";
 import Handlebars from "handlebars";
-import { openAiChannel } from "@/inngest/channels/openai";
+import { anthropicChannel } from "@/inngest/channels/anthropic";
 
 Handlebars.registerHelper("json", (context) => {
   const jsonString = JSON.stringify(context, null, 2);
@@ -12,14 +12,14 @@ Handlebars.registerHelper("json", (context) => {
   return safeString;
 });
 
-type OpenAiData = {
+type AnthropicData = {
   variableName?: string;
   model?: string;
   systemPrompt?: string;
   userPrompt?: string;
 };
 
-export const OpenAiExecutor: NodeExecutor<OpenAiData> = async ({
+export const AnthropicExecutor: NodeExecutor<AnthropicData> = async ({
   data,
   nodeId,
   context,
@@ -27,7 +27,7 @@ export const OpenAiExecutor: NodeExecutor<OpenAiData> = async ({
   publish,
 }) => {
   await publish(
-    openAiChannel().status({
+    anthropicChannel().status({
       nodeId,
       status: "loading",
     }),
@@ -35,24 +35,24 @@ export const OpenAiExecutor: NodeExecutor<OpenAiData> = async ({
 
   if (!data.variableName) {
     await publish(
-      openAiChannel().status({
+      anthropicChannel().status({
         nodeId,
         status: "error",
       }),
     );
 
-    throw new NonRetriableError("OpenAI node: Variable name is missing");
+    throw new NonRetriableError("Anthropic node: Variable name is missing");
   }
 
   if (!data.userPrompt) {
     await publish(
-      openAiChannel().status({
+      anthropicChannel().status({
         nodeId,
         status: "error",
       }),
     );
 
-    throw new NonRetriableError("OpenAI node: User Prompt is missing");
+    throw new NonRetriableError("Anthropic node: User Prompt is missing");
   }
 
   // TODO: throw if credential is missing
@@ -65,30 +65,34 @@ export const OpenAiExecutor: NodeExecutor<OpenAiData> = async ({
 
   // TODO: Fetch credential that user selected
 
-  const credentialValue = process.env.OPENAI_API_KEY;
+  const credentialValue = process.env.ANTHROPIC_API_KEY;
 
-  const openai = createOpenAI({
+  const anthropic = createAnthropic({
     apiKey: credentialValue,
-    baseURL: `${process.env.BASE_URL}/openai/v1`,
+    baseURL: `${process.env.BASE_URL}/anthropic/v1`,
   });
 
   try {
-    const { steps } = await step.ai.wrap("openai-generate-text", generateText, {
-      model: openai(data.model || "gpt-4.1"),
-      system: systemPrompt,
-      prompt: userPrompt,
-      experimental_telemetry: {
-        isEnabled: true,
-        recordInputs: true,
-        recordOutputs: true,
+    const { steps } = await step.ai.wrap(
+      "anthropic-generate-text",
+      generateText,
+      {
+        model: anthropic(data.model || "claude-sonnet-4-0"),
+        system: systemPrompt,
+        prompt: userPrompt,
+        experimental_telemetry: {
+          isEnabled: true,
+          recordInputs: true,
+          recordOutputs: true,
+        },
       },
-    });
+    );
 
     const text =
       steps[0].content[0].type === "text" ? steps[0].content[0].text : "";
 
     await publish(
-      openAiChannel().status({
+      anthropicChannel().status({
         nodeId,
         status: "success",
       }),
@@ -102,7 +106,7 @@ export const OpenAiExecutor: NodeExecutor<OpenAiData> = async ({
     };
   } catch (e) {
     await publish(
-      openAiChannel().status({
+      anthropicChannel().status({
         nodeId,
         status: "error",
       }),
