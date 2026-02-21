@@ -4,6 +4,7 @@ import { generateText } from "ai";
 import { createOpenAI } from "@ai-sdk/openai";
 import Handlebars from "handlebars";
 import { openAiChannel } from "@/inngest/channels/openai";
+import prisma from "@/lib/db";
 
 Handlebars.registerHelper("json", (context) => {
   const jsonString = JSON.stringify(context, null, 2);
@@ -15,6 +16,7 @@ Handlebars.registerHelper("json", (context) => {
 type OpenAiData = {
   variableName?: string;
   model?: string;
+  credentialId?: string;
   systemPrompt?: string;
   userPrompt?: string;
 };
@@ -44,6 +46,17 @@ export const OpenAiExecutor: NodeExecutor<OpenAiData> = async ({
     throw new NonRetriableError("OpenAI node: Variable name is missing");
   }
 
+  if (!data.credentialId) {
+    await publish(
+      openAiChannel().status({
+        nodeId,
+        status: "error",
+      }),
+    );
+
+    throw new NonRetriableError("OpenAI node: Credential is missing");
+  }
+
   if (!data.userPrompt) {
     await publish(
       openAiChannel().status({
@@ -55,21 +68,29 @@ export const OpenAiExecutor: NodeExecutor<OpenAiData> = async ({
     throw new NonRetriableError("OpenAI node: User Prompt is missing");
   }
 
-  // TODO: throw if credential is missing
-
   const systemPrompt = data.systemPrompt
     ? Handlebars.compile(data.systemPrompt)(context)
     : "You are a helpful assistant.";
 
   const userPrompt = Handlebars.compile(data.userPrompt)(context);
 
-  // TODO: Fetch credential that user selected
+  const credential = await step.run("get-credential", () => {
+    return prisma.credential.findUnique({
+      where: {
+        id: data.credentialId,
+      },
+    });
+  });
 
-  const credentialValue = process.env.OPENAI_API_KEY;
+  if (!credential) {
+    throw new NonRetriableError("OpenAI Node: Credential not found");
+  }
+
+  // const credentialValue = process.env.OPENAI_API_KEY;
 
   const openai = createOpenAI({
-    apiKey: credentialValue,
-    baseURL: `${process.env.BASE_URL}/openai/v1`,
+    apiKey: credential.value,
+    baseURL: `${process.env.BASE_URL}/openai/v1`, // JUST for me
   });
 
   try {

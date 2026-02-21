@@ -23,7 +23,7 @@ export const credentialsRouter = createTRPCRouter({
 
       return prisma.credential.create({
         data: {
-          name: generateSlug(3),
+          name,
           userId: ctx.auth.user.id,
           type,
           value, // TODO: Consider encrypting in prod
