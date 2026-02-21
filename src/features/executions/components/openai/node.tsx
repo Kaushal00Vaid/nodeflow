@@ -11,6 +11,7 @@ import { OPENAI_CHANNEL_NAME } from "@/inngest/channels/openai";
 type OpenAiNodeData = {
   variableName?: string;
   model?: string;
+  credentialId?: string;
   systemPrompt?: string;
   userPrompt?: string;
 };
