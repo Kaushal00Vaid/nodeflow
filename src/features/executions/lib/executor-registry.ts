@@ -8,6 +8,7 @@ import { GeminiExecutor } from "../components/gemini/executor";
 import { OpenAiExecutor } from "../components/openai/executor";
 import { AnthropicExecutor } from "../components/anthropic/executor";
 import { DiscordExecutor } from "../components/discord/executor";
+import { SlackExecutor } from "../components/slack/executor";
 
 export const executorRegistry: Record<NodeType, NodeExecutor> = {
   [NodeType.INITIAL]: manualTriggerExecutor,
@@ -19,7 +20,7 @@ export const executorRegistry: Record<NodeType, NodeExecutor> = {
   [NodeType.ANTHROPIC]: AnthropicExecutor,
   [NodeType.OPENAI]: OpenAiExecutor,
   [NodeType.DISCORD]: DiscordExecutor,
-  [NodeType.SLACK]: DiscordExecutor, // change this later
+  [NodeType.SLACK]: SlackExecutor,
 };
 
 export const getExecutor = (type: NodeType): NodeExecutor => {
