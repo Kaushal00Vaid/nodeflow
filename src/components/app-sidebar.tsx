@@ -104,14 +104,20 @@ export const AppSidebar = () => {
         <SidebarMenu>
           {!hasActiveSubscription && !isLoading && (
             <SidebarMenuItem>
-              <SidebarMenuButton
-                tooltip="Upgrade to Pro"
-                className="gap-x-4 h-10 px-4"
-                onClick={() => authClient.checkout({ slug: "pro" })}
-              >
-                <StarIcon className="h-4 w-4 text-yellow-500" />
-                <span>Upgrade to Pro</span>
-              </SidebarMenuButton>
+              <div className="flex flex-col gap-1">
+                <SidebarMenuButton
+                  tooltip="Upgrade to Pro"
+                  className="gap-x-4 h-10 px-4"
+                  onClick={() => authClient.checkout({ slug: "pro" })}
+                >
+                  <StarIcon className="h-4 w-4 text-yellow-500" />
+                  <span>Upgrade to Pro</span>
+                </SidebarMenuButton>
+                <p className="text-xs text-muted-foreground px-4 leading-tight">
+                  Demo mode -- Payments run in sandbox. Use test card details
+                  (e.g., 4242 4242 4242 4242). No real charges will occur.
+                </p>
+              </div>
             </SidebarMenuItem>
           )}
           <SidebarMenuItem>

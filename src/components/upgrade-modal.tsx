@@ -26,6 +26,12 @@ export const UpgradeModal = ({ open, onOpenChange }: UpgradeModalProps) => {
           <AlertDialogDescription>
             You need an active subscription to perform this action. Upgrade to
             Pro to unlock all features
+            <h4>
+              <b>
+                THIS IS TESTING ENVIRONMENT -- KINDLY ENTER RANDOM CARD DETAILS
+                - (e.g. 4242 4242 4242 4242) (PAYMENTS ARE PROCESSED IN SANDBOX)
+              </b>
+            </h4>
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
