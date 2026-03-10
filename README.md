@@ -1,36 +1,55 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<h1 align="center"> Nodeflow </h1>
+
+**Nodeflow** is a full-stack workflow automation platform (similar to n8n or Zapier) desined to orchestrate complex tasks through a Directed Acyclic Graph (DAG) structure. It enables users to build automated pipelines that connect various third-party services with type-safe reliability.
+
+## Key Features
+- **Custom DAG Engine**: Built with topological sorting to resolve node dependencies and manage execution flow.
+- **Reliable Queuing**: Powered by Inngest to manage FIFO execution queues per level, ensuring distributed and resilient node runs.
+- **Data Interpolation**: Dynamic variable parsing that allows downstream nodes to reference and use data from previous steps in real-time.
+- **Native Integrations**: Built-in support for OpenAI, Gemini, Stripe, Discord, and Slack.
+- **Modern Auth & Payments**: Secure multi-provider authentication via Better Auth and monetization/billing via Polar.
+
+## Tech Stack
+- Framework: Next.js (App Router)
+- API: tRPC (End-to-end type safety)
+- Database: PostgreSQL with Prisma ORM
+- Workflow Orchestration: Inngest
+- AI Integration: Vercel AI SDK
+- Validation: Zod
+- Styling: Tailwind CSS + Shadcn UI
 
 ## Getting Started
+> Follow these steps to get a local copy up and running.
 
-First, run the development server:
-
+1. **Clone the repository**
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/Kaushal00Vaid/nodeflow.git
+cd nodeflow
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. **Environment Setup**
+Copy the example environment file and fill in your secrets (Database URL, Inngest Keys, Auth secrets, etc)
+> NOTE: Anthropic, Google, Openai Keys are optional to have
+```bash
+cp .env.example .env
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Install Dependencies
+```bash
+npm install
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Run the Development Server
+This project uses **mprocs** to run the Next.js and background workers simultaneously:
+```bash
+npm run dev:all
+```
 
-## Learn More
+## Architecture
+The platform is built on a "Level-Order" execution strategy. By using topological sorting, the engine identifies independent nodes and processes them using Inngest workers, ensuring that no node runs until its dependencies are successfully resolved.
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+<p align="center">
+  <i>Happy Learning. Happy Coding :)</i>
+</p>
